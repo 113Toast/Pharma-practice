@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>調劑學限時挑戰</title>
+<style>
+:root{--bg:#F6F7F4;--card:#FFFFFF;--ink:#1B2226;--mute:#5B676D;--line:#D9DED9;--accent:#1F5F7A;--ok:#17734A;--bad:#B3261E;
+--l1:#B3261E;--l2:#C46A00;--l3:#8C7600;--l4:#1F7A6D;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12171A;--card:#1B2226;--ink:#E8ECEA;--mute:#98A5AB;--line:#2E3A40;--accent:#6BB8D6;--ok:#4CC38A;--bad:#FF7B72;--l1:#FF7B72;--l2:#F0A04B;--l3:#D8C14A;--l4:#4FCBB8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12171A;--card:#1B2226;--ink:#E8ECEA;--mute:#98A5AB;--line:#2E3A40;--accent:#6BB8D6;--ok:#4CC38A;--bad:#FF7B72;--l1:#FF7B72;--l2:#F0A04B;--l3:#D8C14A;--l4:#4FCBB8;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;min-height:100vh}
+main{max-width:620px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:26px;line-height:1.3;margin:8px 0 6px}
+h2{font-size:19px;margin:22px 0 8px}
+p{margin:6px 0}
+.mute{color:var(--mute);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.levels{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:16px 0}
+.levels span{border-radius:8px;padding:8px 0;text-align:center;font-weight:700;font-size:14px;color:#fff}
+.levels .a{background:var(--l1)}.levels .b{background:var(--l2)}.levels .c{background:var(--l3)}.levels .d{background:var(--l4)}
+:root[data-theme="dark"] .levels span,:root:not([data-theme="light"]) .levels span{color:#101417}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .levels span{color:#fff}}
+button{font:inherit;cursor:pointer}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:14px;background:var(--accent);color:#fff;font-weight:700;font-size:17px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#0E1316}}
+:root[data-theme="dark"] .btn{color:#0E1316}
+.btn.alt{background:transparent;color:var(--accent);border:2px solid var(--accent);margin-top:10px}
+.btn:focus-visible,.opt:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.hud{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;color:var(--mute)}
+.hud b{color:var(--ink);font-size:18px}
+.bar{height:12px;border-radius:6px;background:var(--line);overflow:hidden;margin:8px 0 16px}
+.bar i{display:block;height:100%;width:100%;background:var(--ok);transform-origin:left}
+.tag{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:20px;padding:1px 10px;color:var(--mute)}
+.q{font-size:19px;font-weight:700;line-height:1.55;margin:10px 0 14px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:13px 14px;margin:8px 0;min-height:48px}
+.opt.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--card))}
+.big{font-size:52px;font-weight:800;line-height:1.1;margin:4px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.grid div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;font-size:13px;color:var(--mute)}
+.grid b{display:block;font-size:18px;color:var(--ink)}
+.rv{border-left:5px solid var(--line);padding:6px 0 6px 12px;margin:14px 0}
+.rv.ok{border-color:var(--ok)}.rv.no{border-color:var(--bad)}
+.rv .r{font-size:14px}
+.ok-t{color:var(--ok);font-weight:700}.no-t{color:var(--bad);font-weight:700}
+.hide{display:none}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.seg button{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:12px 4px;font-weight:700;min-height:48px}.seg button[aria-checked="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--card));color:var(--accent)}.seg button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<section id="home">
+  <h1>調劑學限時挑戰</h1>
+  <div class="seg" id="seg" role="radiogroup" aria-label="選擇主題"><button role="radio" data-t="drug" aria-checked="true">管制藥品</button><button role="radio" data-t="latin" aria-checked="false">拉丁文縮寫</button><button role="radio" data-t="unit" aria-checked="false">單位換算</button></div>
+  <p class="mute" id="scope"></p>
+  <div class="levels" id="lvbar" aria-hidden="true"><span class="a">一</span><span class="b">二</span><span class="c">三</span><span class="d">四</span></div>
+  <div class="card">
+    <p><b>規則</b></p>
+    <p id="rule"></p>
+    <p>作答過程中不顯示對錯。全部答完後才看成績與解析，答錯的題目會自動排進重練。</p>
+  </div>
+  <p class="mute" id="best"></p>
+  <button class="btn" id="start">開始挑戰</button>
+</section>
+
+<section id="play" class="hide">
+  <div class="hud"><span id="prog">第 1 / 15 題</span><span>得分 <b id="sc">0</b></span><span><b id="tl">20</b> 秒</span></div>
+  <div class="bar" role="progressbar" aria-label="剩餘時間"><i id="fill"></i></div>
+  <span class="tag" id="cat"></span>
+  <div class="q" id="q"></div>
+  <div id="opts"></div>
+</section>
+
+<section id="end" class="hide">
+  <h1 id="etitle">本輪成績</h1>
+  <div class="big" id="esc"></div>
+  <p class="mute" id="esub"></p>
+  <div class="grid" id="stats"></div>
+  <button class="btn" id="retry">重練錯題</button>
+  <button class="btn alt" id="again">再來一輪新題目</button>
+  <button class="btn alt" id="home2">回首頁換主題</button>
+  <h2>逐題解析</h2>
+  <div id="rev"></div>
+</section>
+</main>
+
+<script>
+const LV=["第一級","第二級","第三級","第四級"];
+// [名稱, 級別(0-3), 補充說明]
+const DRUGS=[
+["海洛因 Heroin",0,"海洛因為第一級管制藥品，戒除時用的是美沙冬（第二級）或丁基原啡因（第三級）。"],
+["嗎啡 Morphine",0,"嗎啡為第一級，也是 PCA 的首選藥品。"],
+["古柯鹼 Cocaine",0,""],["鴉片 Opium",0,""],["愛托啡因 Etorphine",0,""],
+["安非他命 Amphetamine",1,"安非他命為第二級管制藥品，不屬於麻醉藥品。"],
+["甲基安非他命 Methamphetamine",1,""],
+["搖頭丸 MDMA",1,"MDMA 是第二級，不是第三級。"],
+["美沙冬 Methadone",1,"美沙冬為第二級，用於海洛因成癮的替代治療。"],
+["吩坦尼 Fentanyl",1,"吩坦尼為第二級，是 PCA 的次選藥品。"],
+["配西汀 Pethidine（Meperidine）",1,""],["羥可酮 Oxycodone",1,""],
+["GHB（液態強姦丸）",1,""],["大麻 Cannabis",1,""],["甲喹酮 Methaqualone（白板）",1,""],
+["利他能 Methylphenidate",2,"Methylphenidate 為第三級，須使用管制藥品專用處方箋。"],
+["愷他命 Ketamine",2,""],
+["丁基原啡因 Buprenorphine",2,"丁基原啡因為第三級，是 μ 受體部分促效劑。"],
+["FM2 Flunitrazepam",2,""],["青發 Amobarbital",2,""],["紅中 Secobarbital",2,""],
+["可待因製劑（每 100 mL 或 100 g 含 5.0 g 以上）",1,"可待因依含量分級：5.0 g 以上為第二級。"],
+["可待因製劑（每 100 mL 或 100 g 含 1.0 g 以上、未滿 5.0 g）",2,"可待因依含量分級：1.0 g 以上、未滿 5.0 g 為第三級。"],
+["可待因內服液（含糖漿劑，每 100 mL 未滿 1.0 g，醫師處方用藥）",3,"可待因依含量分級：未滿 1.0 g 的處方內服液為第四級。"],
+["佐沛眠 Zolpidem",3,"Zolpidem 為第四級，不需使用管制藥品專用處方箋。"],
+["安定 Diazepam",3,""],["阿普唑他 Alprazolam",3,""],["氯硝西泮 Clonazepam",3,""],
+["唑匹可隆 Zopiclone",3,""],["美服培酮 Mifepristone（RU486）",3,""]
+];
+const lv=(n,l,e,c)=>({c:"分級",q:`「${n}」屬於第幾級管制藥品？`,o:LV.slice(),a:l,e:e||`${n} 為${LV[l]}管制藥品。`,fixed:true});
+// 一般題：{c,q,right,wrong[3],e}
+const R=(c,q,right,wrong,e)=>({c,q,o:[right,...wrong],a:0,e});
+const RULES=[
+R("規定","需要使用管制藥品專用處方箋的是哪些級別？","第一至第三級",["僅第一級","第一、二級","第一至第四級"],"專用處方箋適用第一至第三級；第四級不需要。"),
+R("規定","管制藥品專用處方箋由誰開立？","醫師、牙醫師",["藥師","護理師","醫師與藥師皆可"],"專用處方箋由醫師、牙醫師開立。"),
+R("規定","第一級及第二級管制藥品專用處方箋，可調劑幾次？","限調劑一次",["可調劑三次","可連續調劑至三個月","次數不限"],"第一級及第二級專用處方箋以調劑一次為限。"),
+R("規定","處方藥品屬麻醉藥品時，哪一類人員不得調劑？","藥劑生",["藥師","醫師","牙醫師"],"處方之藥品屬麻醉藥品者，藥劑生不得調劑。"),
+R("規定","管制藥品專用處方箋須具備下列哪項？","領受人簽名及病患聯絡電話",["病人血型","病人家屬簽名","藥師手機號碼"],"須由領受人簽名，且有病患聯絡電話。"),
+R("規定","處方內容有疑義或不完整時，調劑人員應如何處理？","與處方醫師聯絡確認後才調劑",["自行修改後調劑","直接拒絕並退回病人","照原處方調劑再追蹤"],"有疑義時須與處方醫師聯絡確認後始予調劑。"),
+R("規定","哪些級別的管制藥品應置於專設櫥櫃並加鎖？","第一至第三級",["僅第一級","第一、二級","第一至第四級"],"管制藥品管理條例第 24 條：第一至第三級須專設櫥櫃加鎖。"),
+R("規定","管制藥品標籤應以中文載明什麼？麻醉藥品另須標示什麼？","管制級別、警語及警惕圖案或顏色；麻醉藥品另標示麻醉藥品標幟",["價格與廠牌；麻醉藥品另標示藥師姓名","僅管制級別；麻醉藥品不必另標","以英文載明級別；麻醉藥品另標示有效期限"],"管制藥品管理條例第 25 條。"),
+R("規定","成癮性麻醉藥品的簿冊、單據與管制藥品處方箋應保存幾年？","5 年",["1 年","2 年","3 年"],"均應保存 5 年；藥師法第 18 條也規定含麻醉或毒劇藥品的處方箋保存五年。"),
+R("規定","成癮性麻醉藥品的管制藥品管理人，應多久登載收支並清點庫存？","每日",["每週","每月","每季"],"管理人應每日登載收支情形及清點庫存量並作成紀錄。"),
+R("規定","成癮性麻醉藥品調劑及使用後的殘餘藥品，應如何處理？","由管理人會同有關人員銷燬並製作紀錄",["由調劑人員自行丟棄","退回藥商","留存備用"],"殘餘藥品須銷燬並製作紀錄備查。"),
+R("規定","PCA 使用成癮性麻醉藥品的首選與次選藥品為何？","首選嗎啡，次選吩坦尼",["首選吩坦尼，次選嗎啡","首選配西汀，次選嗎啡","首選可待因，次選吩坦尼"],"另外，住院病人術後止痛每次處方不超過 3 日，癌症等慢性疼痛每次以 7 日為限。"),
+R("替代治療","美沙冬替代治療的維持劑量，以每日多少為原則？","20–120 mg",["4–16 mg","10–40 mg","200–400 mg"],"美沙冬起始劑量 10–40 mg/天，維持 20–120 mg/天。4–16 mg 是丁基原啡因/那囉克松的維持劑量。"),
+R("替代治療","美沙冬一般起始劑量為每日多少？","10–40 mg",["20–120 mg","4–8 mg","100–200 mg"],"導入治療起始 10–40 mg/天，並在醫事人員監督下服用。"),
+R("替代治療","丁基原啡因/那囉克松的一般起始劑量為每日多少？","4–8 mg",["10–40 mg","20–120 mg","50–100 mg"],"起始 4–8 mg/天；維持通常 4–16 mg/天。"),
+R("替代治療","丁基原啡因/那囉克松穩定（連續 4 週）後，最多可帶回幾天份？","14 天",["3 天","7 天","30 天"],"帶回家劑量前一個月以 7 天為原則，穩定後最多 14 天。"),
+R("替代治療","美沙冬的給藥方式為何？","到醫療院所，在醫事人員監督下服用",["一次領一個月帶回家","由家屬代領並自行服用","病人自行決定劑量"],"美沙冬須在醫療院所由醫事人員監督下服用。"),
+R("替代治療","丁基原啡因對 μ 鴉片類受體的作用為何？","部分促效劑（partial agonist）",["完全促效劑","完全拮抗劑","NMDA 受體拮抗劑"],"丁基原啡因為蒂巴因衍生物，最終半衰期約 24–37 小時。"),
+R("替代治療","美沙冬主要經哪個酵素代謝？","CYP3A4",["CYP2D6","CYP2C9","CYP1A2"],"美沙冬為脂溶性，口服吸收良好，主要經 CYP3A4 代謝，一天服用一次。"),
+R("替代治療","Suboxone 舌下錠含有哪兩種成分？","buprenorphine 與 naloxone",["methadone 與 naloxone","buprenorphine 與 naltrexone","morphine 與 naloxone"],"規格有 2 mg/0.5 mg 與 8 mg/2 mg；Subutex 則只含 buprenorphine。"),
+R("替代治療","藥癮治療團隊的成員，下列何者「不在」講義所列的必要成員中？","營養師",["精神科專科醫師","臨床心理師","社會工作人員"],"團隊含精神科專科醫師、藥師、護理人員、臨床心理師、職能治療人員及社工各至少一名；精神科醫師須有管制藥品使用執照。")
+];
+const DRUGPOOL=[...DRUGS.map(d=>lv(d[0],d[1],d[2])),...RULES];
+const cg=c=>c==="時間"||c==="頻率"?"時間頻率":c;
+// [縮寫, 英文, 中文, 類別]
+const LT=[["a.c.","before meals","飯前","時間"],["p.c.","after meals","飯後","時間"],["i.c.","between meals","飯間","時間"],["h.s.","at bedtime","睡前","時間"],["noct.","at night","晚上","時間"],["stat","immediately","立即","時間"],
+["b.i.d.","twice daily","一天兩次","頻率"],["t.i.d.","three times a day","一天三次","頻率"],["q.i.d.","four times a day","一天四次","頻率"],["q.d.","every day","一天一次","頻率"],["q.o.d.","every other day","每隔一天給","頻率"],["t.i.w.","three times a week","一星期三次","頻率"],["q1h","every 1 hour","每一小時","頻率"],["prn","as needed","需要時","頻率"],
+["p.o.","by mouth or orally","口服","途徑"],["IV","intravenous","靜脈注射","途徑"],["IM","intramuscular","肌肉注射","途徑"],["SC","subcutaneous","皮下注射","途徑"],["ID","intradermal","皮內注射","途徑"],["SL","sublingually","舌下","途徑"],["top.","topical","局部","途徑"],
+["a.d.","right ear","右耳","眼耳"],["a.s.","left ear","左耳","眼耳"],["a.u.","both ears","雙耳","眼耳"],["o.d.","right eye","右眼","眼耳"],["o.s.","left eye","左眼","眼耳"],["o.u.","both eyes","雙眼","眼耳"],
+["tab","tablet","錠劑","劑型"],["cap.","capsule","膠囊","劑型"],["supp","suppository","肛門栓劑","劑型"],["susp","suspension","懸液劑","劑型"],["syr","syrup","糖漿","劑型"],["inj.","injection","注射劑","劑型"],["emuls.","emulsion","乳液","劑型"],["lot.","lotion","洗劑","劑型"],["pulv.","powder","粉末","劑型"],["amp","ampule","安培","劑型"],
+["aa","of each","各","其他"],["ad","up to","加至","其他"],["q.s.","a sufficient quantity","適量","其他"],["Rx","to take, a recipe","取用","其他"],["sig","write on label","用法","其他"],["mitte","send","總量","其他"],["D5W","dextrose 5% solution","5%葡萄糖溶液","其他"],["NS","normal saline (0.9%)","生理食鹽水","其他"],["D.W.","distilled water","蒸餾水","其他"],["T.P.N.","total parenteral nutrition","全靜脈營養輸注","其他"],["ss","one half","一半","其他"],["disp.","dispense","調配","其他"],["dil.","dilute","稀釋","其他"],["dc","discontinue","停用","其他"],["u.d.","as directed","依指示","其他"],["w/o","without","沒有","其他"],["B.S.A","body surface areas","體表面積","其他"]];
+function latinQ(t){const g=LT.filter(x=>cg(x[3])===cg(t[3])&&x[2]!==t[2]);return R(cg(t[3]),`處方縮寫「${t[0]}」的意思是？`,t[2],sh(g).slice(0,3).map(x=>x[2]),`${t[0]} = ${t[1]}（${t[2]}）。`)}
+const LAPP=[
+R("處方讀法","處方「Sig: 1 tab p.o. t.i.d. p.c.」，病人應如何服用？","口服，每次 1 錠，一天三次，飯後",["口服，每次 1 錠，一天三次，飯前","口服，每次 3 錠，一天一次，飯後","舌下含服，每次 1 錠，一天三次，飯後"],"p.o. 口服；t.i.d. 一天三次；p.c. 飯後。"),
+R("處方讀法","「Take 2 caps q.i.d. a.c. & h.s.」的意思是？","每次 2 顆膠囊，一天四次，飯前及睡前",["每次 4 顆膠囊，一天兩次，飯前及睡前","每次 2 顆膠囊，一天四次，飯後及睡前","每次 2 顆膠囊，每隔一天給，飯前及睡前"],"q.i.d. 一天四次；a.c. 飯前；h.s. 睡前。"),
+R("處方讀法","「q.d.」與「q.o.d.」的差別為何？","q.d. 為每天一次；q.o.d. 為每隔一天一次",["q.d. 為每隔一天一次；q.o.d. 為每天一次","q.d. 為一天四次；q.o.d. 為一天兩次","兩者意思相同"],"q.d. = every day；q.o.d. = every other day。"),
+R("處方讀法","「1 gtt o.u. b.i.d.」的意思是？","雙眼各滴 1 滴，一天兩次",["右眼滴 1 滴，一天兩次","雙耳各滴 1 滴，一天兩次","雙眼各滴 2 滴，一天一次"],"gtt = drop（滴）；o.u. 雙眼；b.i.d. 一天兩次。"),
+R("處方讀法","「Nitroglycerin 0.6 mg tab, 1 tab SL prn chest pain」的用法為何？","舌下含服 1 錠，胸痛需要時使用",["口服 1 錠，每天固定三次","皮下注射 1 次，立即使用","局部塗抹，睡前使用"],"SL 舌下；prn 需要時。")];
+const latinRound=()=>sh([...sh(LT).slice(0,11).map(latinQ),...sh(LAPP).slice(0,4)]);
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const fx=v=>String(Number(v.toFixed(4)));
+function NQ(c,q,ans,wr,u,e){const a=fx(ans),ws=[...new Set(wr.map(fx))].filter(x=>x!==a).slice(0,3);return R(c,q,a+u,ws.map(x=>x+u),e)}
+const UG=[
+()=>{const k=rnd([5,12,20,45,60,72]);return NQ("重量長度",`體重 ${k} kg 約等於多少 lb？（1 kg = 2.2 lb）`,k*2.2,[k/2.2,k*1000,k*0.454],"lb",`${k} × 2.2 = ${fx(k*2.2)} lb。`)},
+()=>{const l=rnd([22,44,66,110,132,154]);return NQ("重量長度",`病人體重 ${l} lb，約等於多少 kg？（1 kg = 2.2 lb）`,l/2.2,[l*2.2,l*454,l/454],"kg",`${l} ÷ 2.2 = ${fx(l/2.2)} kg。`)},
+()=>{const n=rnd([2,3,4,6]);return NQ("容量",`每次服用 ${n} 茶匙（tsp），相當於多少 mL？（1 tsp = 5 mL）`,n*5,[n*15,n*2.5,n*30],"mL",`${n} × 5 = ${n*5} mL。`)},
+()=>{const n=rnd([1,2,3]);return NQ("容量",`${n} 湯匙（tbsp）相當於多少 mL？（1 tbsp = 15 mL）`,n*15,[n*5,n*30,n*10],"mL",`${n} × 15 = ${n*15} mL。`)},
+()=>{const n=rnd([2,4,8]);return NQ("容量",`${n} fl oz 約等於多少 mL？（以 1 fl oz = 30 mL 計）`,n*30,[n*15,n*10,n*2.54],"mL",`${n} × 30 = ${n*30} mL。`)},
+()=>{const n=rnd([2,5,10]);return NQ("重量長度",`${n} inch 等於多少 cm？（1 inch = 2.54 cm）`,n*2.54,[n/2.54,n*12,n*25.4],"cm",`${n} × 2.54 = ${fx(n*2.54)} cm。`)},
+()=>{const n=rnd([2,5,6]);return NQ("重量長度",`${n} feet 等於多少 inch？（1 foot = 12 inches）`,n*12,[n*10,n*2.54,n*30.48],"inch",`${n} × 12 = ${n*12} inch。`)},
+()=>{const g=rnd([0.25,0.5,1.5,2]);return NQ("重量長度",`${g} g 等於多少 mg？`,g*1000,[g*100,g/1000,g*10],"mg",`1 g = 1000 mg，${g} × 1000 = ${g*1000} mg。`)},
+()=>{const m=rnd([250,500,125,50]);return NQ("重量長度",`${m} mcg（μg）等於多少 mg？`,m/1000,[m,m*1000,m/100],"mg",`1 mg = 1000 mcg，${m} ÷ 1000 = ${m/1000} mg。`)},
+()=>{const r=rnd([200,500,1000,2500,5000,10000]),a=100/r;return NQ("濃度",`濃度 1：${r} (w/v) 等於多少百分濃度？`,a,[a*10,a/10,a*100],"%",`1/${r} × 100% = ${fx(a)}%。`)},
+()=>{const p=rnd([0.1,0.9,2,5,10]);return NQ("濃度",`${p}% (w/v) 的溶液，每 mL 含多少 mg 藥物？`,p*10,[p,p*100,p/10],"mg/mL",`${p}% = ${p} g/100 mL = ${p*10} mg/mL。`)},
+()=>{const w=rnd([44,66,88,110]),d=rnd([5,8,10]),k=w/2.2;return NQ("劑量計算",`兒童體重 ${w} lb，處方劑量 ${d} mg/kg，單次劑量為多少 mg？（1 kg = 2.2 lb）`,k*d,[w*d,w*d*2.2,k*d/5],"mg",`先換算 ${w} ÷ 2.2 = ${fx(k)} kg，再 × ${d} = ${fx(k*d)} mg。`)},
+()=>{const D=rnd([250,375,500]);return NQ("劑量計算",`糖漿濃度為 125 mg/5 mL，病人每次需 ${D} mg，應抽取多少 mL？`,D/125*5,[D/125,D/5,D*125/5],"mL",`${D} ÷ 125 × 5 = ${fx(D/125*5)} mL。`)},
+()=>{const e=rnd([10,20,40]);return NQ("濃度",`1 mEq 的 KCl（MW 74.5，valence 1）等於 74.5 mg。${e} mEq 的 KCl 為多少 mg？`,e*74.5,[e*74.5/1000,e/74.5,e*149],"mg",`${e} × 74.5 = ${fx(e*74.5)} mg。`)},
+()=>{const s=rnd([["NaCl",2],["CaCl₂",3],["葡萄糖 dextrose",1]]),n=rnd([2,5,10]);return NQ("濃度",`${n} mmol 的 ${s[0]} 完全溶解後，約提供多少 mOsmol？`,n*s[1],[n,n*2,n*3,n*4],"mOsmol",`${s[0]} 每 mmol 約產生 ${s[1]} mOsmol（NaCl 2、CaCl₂ 3、dextrose 1）。`)}
+];
+const USTAT=[
+R("重量長度","1 lb 約等於幾 g？","454 g",["100 g","1000 g","28 g"],"1 lb = 453.59 g，約 454 g。"),
+R("容量","1 fl oz 約等於多少 mL？","約 30 mL（29.57 mL）",["約 5 mL","約 15 mL","約 100 mL"],"1 fl oz = 29.57 mL，約 30 mL。"),
+R("重量長度","1 foot 等於多少 inch？1 inch 等於多少 cm？","12 inch；2.54 cm",["10 inch；2.54 cm","12 inch；25.4 cm","10 inch；25.4 cm"],"1 foot = 12 inches；1 inch = 2.54 cm。"),
+R("濃度","w/v 百分濃度的定義是什麼？","每 100 mL 溶液含溶質幾 g",["每 100 g 溶液含溶質幾 g","每 100 mL 溶液含溶質幾 mL","每 100 mL 溶液含溶質幾 mg"],"W/W：g/100 g；W/V：g/100 mL；V/V：mL/100 mL。"),
+R("濃度","1：10,000 (w/v) 的溶液，濃度為多少？","0.1 mg/mL",["1 mg/mL","0.01 mg/mL","10 mg/mL"],"1 g/10000 mL = 1000 mg/10000 mL = 0.1 mg/mL。"),
+R("濃度","1 ppm 代表什麼？","每一百萬份中有 1 份（例如 1 g/10⁶ g）",["每一千份中有 1 份","每一萬份中有 1 份","每十億份中有 1 份"],"ppm = parts per million；ppb 才是十億分之一。"),
+R("濃度","mEq 的計算公式為何？","mEq = mg × valence ÷ 原子量、分子量或式量",["mEq = mg ÷ valence × 分子量","mEq = mg × 分子量 ÷ valence","mEq = mg ÷（分子量 × valence）"],"例：KCl 1 mEq = 74.5 mg；CaCl₂·2H₂O 1 mEq = 147/2 = 73.5 mg。"),
+R("濃度","1 mmol 的 CaCl₂ 完全解離後約為多少 mOsmol？","3 mOsmol",["1 mOsmol","2 mOsmol","4 mOsmol"],"CaCl₂ → Ca²⁺ + 2Cl⁻，共 3 個粒子；NaCl 為 2。"),
+R("劑量計算","下列何者是降低調劑計算錯誤的做法？","寫下每一步驟，完成後再核對並檢查答案是否合理",["完全依賴計算機，不必寫過程","只算一次，結果直接採用","省略中間步驟以節省時間"],"講義：寫出每一步、抄錄資料時雙重確認、不完全依賴計算機，並做 sense check。")];
+const unitRound=()=>sh([...sh(UG).slice(0,9).map(g=>g()),...sh(USTAT).slice(0,6)]);
+let PER=20;const N=15,sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const $=id=>document.getElementById(id);
+const show=id=>["home","play","end"].forEach(s=>$(s).classList.toggle("hide",s!==id));
+let run=null,wrongBank=[],topic="drug";
+const TOPICS={drug:["管制藥品","範圍：分級、專用處方箋與管理規定、美沙冬與丁基原啡因替代治療。"],latin:["拉丁文縮寫","範圍：時間與頻率、給藥途徑、眼耳、劑型，以及處方箋讀法。"],unit:["單位換算","範圍：重量、長度與容量換算、濃度表示法、mEq 與 mOsmol、依體重計算劑量。每次的數字都不同。"]};
+const bk=()=>"cdq-best-"+topic;
+function getBest(){try{return +localStorage.getItem(bk())||0}catch(e){return 0}}
+function bestTxt(){const b=getBest();$("best").textContent=b?`${TOPICS[topic][0]}最高分：${b} 分`:"這個主題還沒有成績，先來一輪。"}
+function setTopic(t){topic=t;document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-checked",String(b.dataset.t===t)));$("scope").textContent=TOPICS[t][1];$("lvbar").classList.toggle("hide",t!=="drug");$("rule").textContent=`每輪 15 題，每題 ${t==="unit"?45:20} 秒。答對得 100 分，再依剩餘時間加最多 100 分的速度分，滿分 3000。`;bestTxt()}
+
+
+bestTxt();
+
+function pickRound(){
+  if(topic==="latin")return latinRound();if(topic==="unit")return unitRound();const by=c=>sh(DRUGPOOL.filter(q=>q.c===c));
+  return sh([...by("分級").slice(0,7),...by("規定").slice(0,5),...by("替代治療").slice(0,3)]);
+}
+function prep(q){ // 洗牌選項（分級題固定順序）
+  if(q.fixed)return {...q,opts:q.o.slice(),ans:q.a};
+  const idx=sh([0,1,2,3]);return {...q,opts:idx.map(i=>q.o[i]),ans:idx.indexOf(q.a)};
+}
+function begin(list,isRetry){
+  PER=topic==="unit"?45:20;
+  run={list:list.map(prep),i:0,score:0,log:[],retry:isRetry,t0:0,timer:null,locked:false};
+  show("play");ask();
+}
+function ask(){
+  const q=run.list[run.i];run.locked=false;
+  $("prog").textContent=`第 ${run.i+1} / ${run.list.length} 題`;
+  $("sc").textContent=run.score;$("cat").textContent=q.c;$("q").textContent=q.q;
+  const box=$("opts");box.innerHTML="";
+  q.opts.forEach((t,i)=>{const b=document.createElement("button");b.className="opt";b.textContent=t;b.onclick=()=>pick(i,b);box.appendChild(b)});
+  run.t0=performance.now();clearInterval(run.timer);tick();run.timer=setInterval(tick,100);
+}
+function left(){return Math.max(0,PER-(performance.now()-run.t0)/1000)}
+function tick(){
+  const l=left();$("tl").textContent=Math.ceil(l);
+  $("fill").style.transform=`scaleX(${l/PER})`;
+  $("fill").style.background=l>10?"var(--ok)":l>5?"var(--l2)":"var(--bad)";
+  if(l<=0)finish(null);
+}
+function pick(i,b){if(run.locked)return;b.classList.add("sel");finish(i)}
+function finish(choice){
+  if(run.locked)return;run.locked=true;clearInterval(run.timer);
+  const q=run.list[run.i],l=left(),ok=choice===q.ans;
+  const pts=ok?100+Math.round(l/PER*100):0;run.score+=pts;
+  run.log.push({q,choice,ok,pts});$("sc").textContent=run.score;
+  setTimeout(()=>{run.i++;run.i<run.list.length?ask():results()},choice===null?150:250);
+}
+function results(){
+  const L=run.log,right=L.filter(x=>x.ok).length,max=L.length*200;
+  wrongBank=L.filter(x=>!x.ok).map(x=>x.q);
+  if(!run.retry&&run.score>getBest()){try{localStorage.setItem(bk(),run.score)}catch(e){}}
+  $("etitle").textContent=run.retry?"重練成績":"本輪成績";
+  $("esc").textContent=`${run.score} 分`;
+  $("esub").textContent=run.retry?`重練 ${L.length} 題，答對 ${right} 題。`:`滿分 ${max} 分，答對 ${right} / ${L.length} 題。`;
+  const cats=[...new Set(L.map(x=>x.q.c))];
+  $("stats").innerHTML=cats.map(c=>{const a=L.filter(x=>x.q.c===c);return `<div>${c}<b>${a.length?a.filter(x=>x.ok).length+" / "+a.length:"–"}</b></div>`}).join("");
+  const rb=$("retry");rb.classList.toggle("hide",!wrongBank.length);rb.textContent=`重練錯題（${wrongBank.length} 題）`;
+  $("rev").innerHTML="";
+  L.forEach((x,n)=>{
+    const d=document.createElement("div");d.className="rv "+(x.ok?"ok":"no");
+    const mine=x.choice===null?"（逾時未作答）":x.q.opts[x.choice];
+    d.innerHTML=`<div class="r"><span class="${x.ok?"ok-t":"no-t"}">${x.ok?"答對":"答錯"}</span>　第 ${n+1} 題・${x.q.c}・${x.pts} 分</div><div><b></b></div><div class="r"></div><div class="r"></div><div class="r mute"></div>`;
+    const k=d.children;
+    k[1].firstChild.textContent=x.q.q;
+    k[2].textContent="你的答案："+mine;
+    k[3].textContent="正確答案："+x.q.opts[x.q.ans];
+    k[4].textContent=x.q.e;
+    if(x.ok)k[2].textContent="你的答案："+mine+"（正確）";
+    $("rev").appendChild(d);
+  });
+  bestTxt();show("end");scrollTo(0,0);
+}
+$("start").onclick=()=>begin(pickRound(),false);
+$("again").onclick=()=>begin(pickRound(),false);
+$("retry").onclick=()=>begin(sh(wrongBank),true);
+$("home2").onclick=()=>show("home");
+document.querySelectorAll("#seg button").forEach(b=>b.onclick=()=>setTopic(b.dataset.t));
+setTopic("drug");
+</script>
+</body>
+</html>
